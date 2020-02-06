@@ -24,25 +24,39 @@ jpg_img = imread(jpg_path);
 figure()
 subplot(1, 3, 1)
 imshow(bmp_img)
+title('BMP');
 subplot(1, 3, 2)
 imshow(jpg_img)
+title('JPG');
 subplot(1, 3, 3)
 imshowpair(bmp_img, jpg_img, 'diff') 
+title('Diff');
 
 %% A.5
 midpoint = size(bmp_img) / 2;
-xs = midpoint(1) - 5:midpoint(1) + 5;
-ys = midpoint(2) - 5: midpoint(2) + 5;
-extracted = bmp_img(xs, ys);
+n = 10;
+xs = midpoint(1) - n:midpoint(1) + n;
+ys = midpoint(2) - n: midpoint(2) + n;
+bmp_extract = bmp_img(xs, ys);
+jpg_extract = jpg_img(xs, ys);
 figure()
-imshow(extracted)
+subplot(1, 3, 1)
+imshow(bmp_extract)
+title('BMP');
+subplot(1, 3, 2)
+imshow(jpg_extract)
+title('JPG');
+subplot(1, 3, 3)
+imshowpair(bmp_extract, jpg_extract, 'diff') 
+title('Diff');
 
 %% A.6 (imcomplement)
 neg_img = intmax('uint8') - bmp_img;
 figure()
 imshow(neg_img)
+title('Complement BMP');
 
-%% A.7
+%% A.7 (Image Reduction)
 ks = [2, 2];
 input = bmp_img;
 input_size = size(input);
@@ -59,7 +73,8 @@ for i=1:output_size(1)
 end
 figure()
 imshow(scaled)
-%% A.8
+
+%% A.8 (Mosaic)
 ks = [2, 2];
 input = bmp_img;
 input_size = size(input);
@@ -77,10 +92,37 @@ end
 figure()
 subplot(1, 3, 1)
 imshow(bmp_img)
+title('Normal');
 subplot(1, 3, 2)
 imshow(pixelated)
+title('Pixelated');
 subplot(1, 3, 3)
 imshowpair(bmp_img, pixelated, 'diff') 
+title('Diff');
+
+%% A.8 (Averaging)
+ks = [2, 2];
+input = bmp_img;
+input_size = size(input);
+output_size = input_size - ks + 1;
+blurred = zeros(input_size, 'uint8');
+for x=1:output_size(1)
+    for y=1:output_size(2)
+        xs = x:x+ks(1)-1;
+        ys = y:y+ks(2)-1;
+        blurred(x, y) = mean(input(xs, ys), 'all');
+    end
+end
+figure()
+subplot(1, 3, 1)
+imshow(bmp_img)
+title('Normal');
+subplot(1, 3, 2)
+imshow(blurred)
+title('Blurred');
+subplot(1, 3, 3)
+imshowpair(bmp_img, blurred, 'diff') 
+title('Diff');
 
 %% A.9
 bit_cnt = 8;
@@ -91,6 +133,7 @@ for i=1:bit_cnt
     bits{i}(bits{i} > 0) = intmax('uint8');
     subplot(2, 4, i)
     imshow(bits{i})
+    title(strcat('bit ', int2str(i - 1)));
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
