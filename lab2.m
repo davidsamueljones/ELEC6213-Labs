@@ -14,7 +14,7 @@ sigs{2}.Y = sin((X + pi / 2) * 5);
 sigs{3}.title = 'sin, f=10, p=0';
 sigs{3}.Y = sin(X * 10);
 for i=1:length(sigs)
-   sigs{i}.X = X;
+    sigs{i}.X = X;
 end
 b1_plot(sigs)
 
@@ -30,7 +30,7 @@ sigs{2}.Y = cos((X + pi / 2) * 5);
 sigs{3}.title = 'cos, f=10, p=0';
 sigs{3}.Y = cos(X * 10);
 for i=1:length(sigs)
-   sigs{i}.X = X;
+    sigs{i}.X = X;
 end
 b1_plot(sigs)
 
@@ -114,7 +114,7 @@ imshow(mat2gray(bmp_img_inv))
 title('IFFT(FFT(bmp)')
 nexttile
 imshow(mat2gray(log(fftshift(bmp_img_inv_zero_phase))))
-title('Zero Phase')
+title('Zero Phase (log)')
 nexttile
 imshow(mat2gray(real(bmp_img_inv_unit_mag)))
 title('Unit Magnitude')
@@ -137,16 +137,42 @@ for i=1:length(sigs)
     sig_inv = ifft(sig_fft);
     nexttile
     plot(X, Y)
+    dx = (max(X) - min(X)) / 10;
+    dy = (max(Y) - min(Y)) / 10;
+    xs = xlim;
+    ys = ylim;
+    xlim([xs(1) - dx, xs(2) + dx]);
+    ylim([ys(1) - dy, ys(2) + dy]);
     title(sigs{i}.title)
     nexttile
-    SS = singlesided(sig_fft);
-    plot(0:length(SS)-1, SS)
+    SS = singlesided(abs(sig_fft));
+    FS = (0:length(SS)-1);
+    plot(FS, SS)
+    dx = (max(X) - min(X)) / 10;
+    dy = (max(SS) - min(SS)) / 10;
+    xs = xlim;
+    ys = ylim;
+    xlim([xs(1) - dx, xs(2) + dx]);
+    ylim([ys(1) - dy, ys(2) + dy]);
     title('Magnitude')
     nexttile
-    plot(X-1, angle(sig_fft))
+    SS = sindlesidedphase(angle(sig_fft));
+    plot(FS, SS)
+    dx = (max(X) - min(X)) / 10;
+    dy = (max(SS) - min(SS)) / 10;
+    xs = xlim;
+    ys = ylim;
+    xlim([xs(1) - dx, xs(2) + dx]);
+    ylim([ys(1) - dy, ys(2) + dy]);
     title('Phase')
     nexttile
     plot(X, sig_inv)
+    dx = (max(X) - min(X)) / 10;
+    dy = (max(SS) - min(SS)) / 10;
+    xs = xlim;
+    ys = ylim;
+    xlim([xs(1) - dx, xs(2) + dx]);
+    ylim([ys(1) - dy, ys(2) + dy]);
     title('Inverse FFT')
 end
 end
@@ -158,6 +184,11 @@ SS = DS(1:fix(L/2)+1);
 SS(2:end-1) = 2*SS(2:end-1);
 end
 
+function SS = sindlesidedphase(DS)
+L = length(DS);
+SS=DS(1:fix(L/2)+1);
+SS(2:end-1)=2*SS(2:end-1);
+end
 function fh = b4_plot(X, Y, Z)
 x_lims = [X(1), X(end)];
 y_lims = [Y(1), Y(end)];
